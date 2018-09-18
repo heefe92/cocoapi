@@ -171,7 +171,6 @@ class COCOeval:
             gt = [_ for cId in p.catIds for _ in self._gts[imgId,cId]]
             dt = [_ for cId in p.catIds for _ in self._dts[imgId,cId]]
         if len(gt) == 0 and len(dt) ==0:
-            print('sss')
             return []
         inds = np.argsort([-d['score'] for d in dt], kind='mergesort')
         dt = [dt[i] for i in inds]
@@ -190,7 +189,6 @@ class COCOeval:
         # compute iou between each dt and gt region
         iscrowd = [int(o['iscrowd']) for o in gt]
         ious = maskUtils.iou(d,g,iscrowd)
-        print(ious)
         return ious
 
     def computeOks(self, imgId, catId):

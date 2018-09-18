@@ -149,9 +149,10 @@ class COCOeval:
         self.ious = {(imgId, catId): computeIoU(imgId, catId) \
                         for imgId in p.imgIds
                         for catId in catIds}
-
+        
         evaluateImg = self.evaluateImg
         maxDet = p.maxDets[-1]
+
         self.evalImgs = [evaluateImg(imgId, catId, areaRng, maxDet)
                  for catId in catIds
                  for areaRng in p.areaRng
@@ -350,6 +351,7 @@ class COCOeval:
         i_list = [n for n, i in enumerate(p.imgIds)  if i in setI]
         I0 = len(_pe.imgIds)
         A0 = len(_pe.areaRng)
+      
         # retrieve E at each category, area range, and max number of detections
         for k, k0 in enumerate(k_list):
             Nk = k0*A0*I0
@@ -371,6 +373,7 @@ class COCOeval:
                     dtIg = np.concatenate([e['dtIgnore'][:,0:maxDet]  for e in E], axis=1)[:,inds]
                     gtIg = np.concatenate([e['gtIgnore'] for e in E])
                     npig = np.count_nonzero(gtIg==0 )
+                    
                     if npig == 0:
                         continue
                     tps = np.logical_and(               dtm,  np.logical_not(dtIg) )
@@ -378,6 +381,7 @@ class COCOeval:
 
                     tp_sum = np.cumsum(tps, axis=1).astype(dtype=np.float)
                     fp_sum = np.cumsum(fps, axis=1).astype(dtype=np.float)
+                    
                     for t, (tp, fp) in enumerate(zip(tp_sum, fp_sum)):
                         tp = np.array(tp)
                         fp = np.array(fp)
@@ -409,6 +413,8 @@ class COCOeval:
                             pass
                         precision[t,:,k,a,m] = np.array(q)
                         scores[t,:,k,a,m] = np.array(ss)
+
+                        
         self.eval = {
             'params': p,
             'counts': [T, R, K, A, M],
